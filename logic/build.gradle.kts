@@ -31,6 +31,7 @@ kotlin {
         }
     }
     android()
+    iosX64()
 
     sourceSets {
         val commonMain by getting {
@@ -69,6 +70,8 @@ kotlin {
             }
         }
         val androidTest by getting
+        val iosX64Main by getting
+        val iosX64Test by getting
     }
 }
 
