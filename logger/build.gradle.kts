@@ -43,7 +43,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("co.touchlab:kermit:1.0.0")
+                implementation("co.touchlab:kermit:1.1.1")
+                implementation(Dependencies.Coroutines.core)
             }
         }
     }
