@@ -31,7 +31,7 @@ typealias LogElement = Triple<String, Severity, String?>
 private const val LOG_FILE_NAME = "insights.log"
 private const val LOG_FILE_MAX_SIZE_THRESHOLD = 5 * 1024 * 1024
 
-actual class KaliumFileWriter : LogWriter() {
+actual class KaliumFileWriter actual constructor(private val path: String) : LogWriter() {
 
     private var flush = MutableStateFlow<Long>(0)
     private var flushCompleted = MutableStateFlow<Long>(0)
@@ -44,13 +44,13 @@ actual class KaliumFileWriter : LogWriter() {
     private lateinit var filePath: String
 
 
-    actual fun init(context: Context?) {
-        context?.filesDir?.absolutePath?.let {
+    actual fun init() {
+        path.let {
             filePath = try {
-                getLogsDirectoryFromPath(context.filesDir?.absolutePath.toString())
+                getLogsDirectoryFromPath(it)
             } catch (e: FileNotFoundException) {
                 // Fallback to default path
-                context.filesDir?.absolutePath.toString()
+                it
             }
 
         }

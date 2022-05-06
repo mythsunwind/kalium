@@ -44,9 +44,10 @@ enum class KaliumLogLevel {
 class KaliumLogger(config: Config) {
 
     private val kermitLogger: KermitLogger
-    val kaliumFileWriter = KaliumFileWriter()
+    val kaliumFileWriter = KaliumFileWriter(config.path)
 
     init {
+        kaliumFileWriter
         kermitLogger = KermitLogger(
             config = StaticConfig(
                 minSeverity = config.severityLevel, listOf(kaliumFileWriter)
@@ -89,7 +90,7 @@ class KaliumLogger(config: Config) {
 
     class Config(
         val severity: KaliumLogLevel,
-        val tag: String
+        val tag: String, val path: String = ""
     ) {
         val severityLevel: Severity = when (severity) {
             KaliumLogLevel.VERBOSE -> Severity.Verbose
