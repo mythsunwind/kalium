@@ -44,8 +44,13 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("co.touchlab:kermit:1.1.1")
+            }
+        }
+        val androidMain by getting {
+            dependencies {
                 implementation(Dependencies.Coroutines.core)
             }
         }
+
     }
 }
