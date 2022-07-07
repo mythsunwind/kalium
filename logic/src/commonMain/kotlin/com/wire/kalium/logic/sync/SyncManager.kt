@@ -86,6 +86,7 @@ internal class SyncManagerImpl(
     private val syncRepository: SyncRepository,
     private val eventProcessor: EventProcessor,
     private val eventGatherer: EventGatherer,
+    private val syncCriteriaObserver: SyncCriteriaObserver,
     kaliumDispatcher: KaliumDispatcher = KaliumDispatcherImpl
 ) : SyncManager {
 
@@ -117,6 +118,22 @@ internal class SyncManagerImpl(
             else -> {
                 kaliumLogger.i("Sync job failed due to unknown reason", throwable)
                 syncRepository.updateSyncState { SyncState.Failed(CoreFailure.Unknown(throwable)) }
+            }
+        }
+    }
+
+    private val syncScope = CoroutineScope(processingSupervisorJob + kaliumDispatcher.io)
+
+    init {
+        syncScope.launch {
+            syncCriteriaObserver.observeStartCriteria().collect {
+                if(it is SyncStartCriteriaResolution.Ready){
+                    // START SYNC
+                    startSyncIfNotYetStarted()
+                }else{
+                    // STOP SYNC
+                    TODO("Stop?!")
+                }
             }
         }
     }
