@@ -86,7 +86,7 @@ internal class SyncManagerImpl(
     private val syncRepository: SyncRepository,
     private val eventProcessor: EventProcessor,
     private val eventGatherer: EventGatherer,
-    private val syncCriteriaObserver: SyncCriteriaObserver,
+    private val syncCriteriaProvider: SyncCriteriaProvider,
     kaliumDispatcher: KaliumDispatcher = KaliumDispatcherImpl
 ) : SyncManager {
 
@@ -126,8 +126,8 @@ internal class SyncManagerImpl(
 
     init {
         syncScope.launch {
-            syncCriteriaObserver.observeStartCriteria().collect {
-                if(it is SyncStartCriteriaResolution.Ready){
+            syncCriteriaProvider.syncCriteriaFlow().collect {
+                if(it is SyncCriteriaResolution.Ready){
                     // START SYNC
                     startSyncIfNotYetStarted()
                 }else{

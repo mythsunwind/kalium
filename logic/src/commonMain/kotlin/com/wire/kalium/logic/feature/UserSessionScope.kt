@@ -71,10 +71,10 @@ import com.wire.kalium.logic.feature.message.MessageSendingScheduler
 import com.wire.kalium.logic.feature.message.SessionEstablisher
 import com.wire.kalium.logic.feature.message.SessionEstablisherImpl
 import com.wire.kalium.logic.feature.team.TeamScope
-import com.wire.kalium.logic.feature.user.ObserveFileSharingStatusUseCase
-import com.wire.kalium.logic.feature.user.ObserveFileSharingStatusUseCaseImpl
 import com.wire.kalium.logic.feature.user.IsFileSharingEnabledUseCase
 import com.wire.kalium.logic.feature.user.IsFileSharingEnabledUseCaseImpl
+import com.wire.kalium.logic.feature.user.ObserveFileSharingStatusUseCase
+import com.wire.kalium.logic.feature.user.ObserveFileSharingStatusUseCaseImpl
 import com.wire.kalium.logic.feature.user.UserScope
 import com.wire.kalium.logic.featureFlags.KaliumConfigs
 import com.wire.kalium.logic.sync.ConversationEventReceiver
@@ -84,12 +84,14 @@ import com.wire.kalium.logic.sync.EventGathererImpl
 import com.wire.kalium.logic.sync.FeatureConfigEventReceiver
 import com.wire.kalium.logic.sync.FeatureConfigEventReceiverImpl
 import com.wire.kalium.logic.sync.ObserveSyncStateUseCase
+import com.wire.kalium.logic.sync.SyncCriteriaProvider
+import com.wire.kalium.logic.sync.SyncCriteriaProviderImpl
 import com.wire.kalium.logic.sync.SyncManager
 import com.wire.kalium.logic.sync.SyncManagerImpl
+import com.wire.kalium.logic.sync.UserEventReceiver
 import com.wire.kalium.logic.sync.UserEventReceiverImpl
 import com.wire.kalium.logic.sync.event.EventProcessor
 import com.wire.kalium.logic.sync.event.EventProcessorImpl
-import com.wire.kalium.logic.sync.UserEventReceiver
 import com.wire.kalium.logic.sync.handler.MessageTextEditHandler
 import com.wire.kalium.logic.util.TimeParser
 import com.wire.kalium.logic.util.TimeParserImpl
@@ -271,12 +273,16 @@ abstract class UserSessionScopeCommon(
             conversationEventReceiver, userEventReceiver, featureConfigEventReceiver
         )
 
+    private val syncCriteriaProvider: SyncCriteriaProvider
+        get() = SyncCriteriaProviderImpl(clientRepository, logoutRepository)
+
     val syncManager: SyncManager by lazy {
         SyncManagerImpl(
             authenticatedDataSourceSet.userSessionWorkScheduler,
             syncRepository,
             eventProcessor,
-            eventGatherer
+            eventGatherer,
+            syncCriteriaProvider
         )
     }
 
